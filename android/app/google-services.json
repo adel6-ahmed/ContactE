@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "822442362968",
+    "project_id": "contacte-b2228",
+    "storage_bucket": "contacte-b2228.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:822442362968:android:e9bfcb32e4e9741299222d",
+        "android_client_info": {
+          "package_name": "com.example.sad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDScmh1wNXns7NA6U95PhR0TtV4tgp6_Gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

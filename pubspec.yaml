@@ -1,0 +1,71 @@
+name: sad
+description: "A new Flutter project."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  awesome_dialog: ^3.2.1
+  cloud_firestore: ^4.17.4
+  cupertino_icons: ^1.0.8
+  firebase_core: ^2.31.1
+  flare_flutter: ^3.0.0
+  path_provider: ^2.1.3
+  path_provider_android: ^2.2.4
+  path_provider_foundation: ^2.4.0
+  rive: ^0.13.4
+  rive_common: ^0.4.8
+  flutter_svg: ^2.0.9
+  font_awesome_flutter: ^10.7.0
+  google_fonts: ^6.2.1
+  http: ^1.2.1
+  lottie: ^3.1.2
+  url_launcher: ^6.2.6
+  url_strategy: ^0.2.0
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+  leak_tracker: 10.0.0
+  leak_tracker_flutter_testing: ^2.0.1  # Updated to match flutter_test
+  leak_tracker_testing: ^2.0.1  # Updated to match flutter_test
+  lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/whatsapp.png
+    - assets/OnBoarding1.png
+    - assets/OnBoarding2.png
+    - assets/OnBoarding3.png
+    - assets/GITHUB.png
+    - assets/Gmail.png
+    - assets/threads.png
+    - assets/INSTAGRAM.png
+    - assets/tiktok.png
+    - assets/X.png
+    - assets/ms.png
+    - assets/Snapchat.png
+    - assets/LINK.png
+    - assets/3.png
+    - assets/Youtube.png
+    - assets/5.png
+    - assets/4.png
+    - assets/facebook.png
+    - assets/8.png
+    - assets/adel6.json
+    - assets/6.png
+    - assets/a.png
+    - assets/ContactE.png
+    - assets/G.png
+    - assets/L.png
+    - assets/CA.png
+    - assets/HHH.png
+
