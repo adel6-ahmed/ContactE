@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sad/screens/SuggestionScreen.dart';
 
 import '../../screens/group_screen.dart';
 import '../../screens/home_screen.dart';
 import '../../screens/my_network_screen.dart';
 import '../../screens/profile_screen.dart';
-import '../../screens/request.dart';
+
 import '../methods/navigation.dart';
 import '../theme/colors.dart';
 
@@ -68,7 +69,7 @@ class ButtomNavBar extends StatelessWidget {
             index = value;
             GoTo(
               context: context,
-              screen: request(),
+              screen: SuggestionScreen(userId: 'some_user_id'),
             );
           }
         },

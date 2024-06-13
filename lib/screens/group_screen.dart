@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sad/services/firebase_functions.dart';
+import 'package:sad/shared/widgets/loader.dart';
 
+import '../services/firestore_functions.dart';
 import '../shared/theme/colors.dart';
 import '../shared/widgets/GroupItem.dart';
 import '../shared/widgets/back_button.dart';
@@ -16,6 +17,9 @@ class GroupScreen extends StatelessWidget {
         future: FireBaseServices().getGroups(id: '2j8M93CHwcvgL4KfAFaq'),
    
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return LoaderScreen();
+          }
           if (snapshot.hasData) {
             var groups = snapshot.data;
             return Scaffold(

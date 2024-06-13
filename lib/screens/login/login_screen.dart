@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:sad/screens/crud/create_profile.dart';
 import 'package:sad/screens/login/signup_screen.dart';
+import 'package:sad/services/auth_service.dart';
 import 'package:sad/shared/theme/colors.dart';
 
 import '../../shared/theme/texet.dart';
 import '../../shared/widgets/action_button.dart';
+import 'package:sad/screens/login/InterestsScreen.dart';
+
 
 class LoginScreen extends StatelessWidget {
   @override
@@ -97,23 +101,19 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                       child: Form(
                         key: formKey,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment
-                              .stretch, // Stretch items horizontally
+                          crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch items horizontally
                           children: [
-                            SizedBox(
-                                height: 20), // Added SizedBox with height 20
+                            SizedBox(height: 20), // Added SizedBox with height 20
                             Image.asset(
                               'assets/L.png',
                               width: 80,
                               height: 80,
                               fit: BoxFit.contain,
                             ),
-                            SizedBox(
-                                height: 20), // Adjusted height here if needed
+                            SizedBox(height: 20), // Adjusted height here if needed
                             TextFormField(
                               onFieldSubmitted: (value) {
-                                FocusScope.of(context)
-                                    .requestFocus(passwordNode);
+                                FocusScope.of(context).requestFocus(passwordNode);
                               },
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -200,15 +200,19 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                             SizedBox(height: 10),
                             action_button(
                               title: 'Login',
-                              action: () {
+                              action: () async {
                                 if (formKey.currentState!.validate()) {
-                                  print('--------------');
-                                  print(emailController.text);
-                                  print('--------------');
-                                  print(passwordController.text);
+                                  FocusScope.of(context).requestFocus(
+                                    FocusNode(),
+                                  );
+                                    Auth().userLogin(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    context: context);
                                 }
                               },
                             ),
+
                             TextButton(
                               onPressed: () {},
                               child: Text(
@@ -219,7 +223,9 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                             SizedBox(height: 10),
                             action_button(
                               title: '  Login with Google  ',
-                              action: () {},
+                              action: () {
+                              
+                              },
                             ),
                             SizedBox(height: 10),
                             action_button(
@@ -232,7 +238,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => signup_screen()),
+                                      builder: (context) => CreateProfileScreen(userId: 'some_user_id')),
                                 );
                               },
                               child: Text(

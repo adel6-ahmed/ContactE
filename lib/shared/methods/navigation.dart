@@ -8,3 +8,22 @@ void GoTo({required BuildContext context, required Widget screen}) {
     ),
   );
 }
+void GoToWithNoBackButton({required BuildContext context, required Widget screen}) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => screen,
+    ),
+  );
+}
+
+
+void GoToReplacement({required BuildContext context, required Widget screen}) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => screen),
+  );
+}
+
+
+

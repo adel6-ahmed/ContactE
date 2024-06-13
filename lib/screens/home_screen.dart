@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // Import Lottie package
-import 'package:sad/screens/my_network_screen.dart';
+import 'package:sad/screens/search_results.dart';
 import 'package:sad/shared/methods/navigation.dart';
 
 import '../shared/theme/colors.dart';
 import '../shared/theme/texet.dart';
 import '../shared/widgets/action_button.dart';
 import '../shared/widgets/button_nav_bar.dart';
+import 'package:sad/screens/login/InterestsScreen.dart';
+
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -62,6 +64,9 @@ class HomeScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
+                    onSubmitted: (value) {
+                    GoTo(context: context, screen: SearchResultScreen(phoneNumber: value,));
+                    },
                     controller: PhoneNumber,
                     keyboardType: TextInputType.phone,
                     cursorColor: white,
@@ -93,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.search,
                     action: () {
                       print(PhoneNumber.text);
-                      GoTo(context: context, screen: MyNetworkScreen());
+                      GoTo(context: context, screen: SearchResultScreen(phoneNumber: PhoneNumber.text,));
                       //GoTo(context: context,screen: OnBoarding1());
                     },
                   ),

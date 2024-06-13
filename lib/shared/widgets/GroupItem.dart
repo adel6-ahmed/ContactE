@@ -10,9 +10,6 @@ class GroupItem extends StatelessWidget {
    Group myGroup;
   @override
   Widget build(BuildContext context) {
-    print("=====================");
-    print(myGroup.members);
-     print("=====================");
     return GestureDetector(
       onTap: () {
         GoTo(context: context, screen: SingleGroupScreen(myGroup: myGroup));

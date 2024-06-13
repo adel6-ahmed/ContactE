@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sad/screens/friend_screen.dart';
 import 'package:sad/shared/methods/navigation.dart';
+import 'package:sad/shared/widgets/loader.dart';
 
-import '../../services/firebase_functions.dart';
-import '../../services/models.dart';
+import '../../services/firestore_functions.dart';
 import '../theme/colors.dart';
 import '../theme/texet.dart';
 
@@ -19,6 +19,9 @@ class ContactCard extends StatelessWidget {
     return FutureBuilder(
       future: FireBaseServices().getUserById(id: userId),
       builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return Loader();
+          }
         if (snapshot.hasData) {
           var friend = snapshot.data;
           return GestureDetector(

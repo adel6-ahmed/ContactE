@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sad/screens/profile_screen.dart';
+import 'package:sad/screens/login/signup_screen.dart';
 import 'package:sad/shared/methods/navigation.dart';
 
-import '../../services/firebase_functions.dart';
 import '../../shared/theme/colors.dart';
 import '../../shared/theme/texet.dart';
 import '../../shared/widgets/action_button.dart';
 
 class CreateProfileScreen extends StatelessWidget {
-  CreateProfileScreen({super.key});
+  String userId;
+  CreateProfileScreen({super.key, required this.userId});
   @override
   Widget build(BuildContext context) {
     return _LoginScreenContent();
@@ -184,44 +184,21 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                             ),
                             SizedBox(height: 25),
                             action_button(
-                              title: 'Creat User',
-                              action: () async {
-                               if (formKey.currentState!.validate()) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-
-                                  FireBaseServices().getUser();
-                                   FireBaseServices().CreateNewUser(
-                                    name: name.text,
-                                    phoneNumber: phoneNumberController.text,
-                                     context: context,
-                                    );
-                              }
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'User Added Successfully',
-                                   
-                                   
-                                       style: body,
-                                      ),
-                                      backgroundColor: Lyellow,
-                                      showCloseIcon: true,
-                                      duration: Duration(seconds: 2),
-                                      closeIconColor: Ldark,
-                                      behavior: SnackBarBehavior.floating,
+                                title: 'Creat User',
+                                action: () async {
+                                  if (formKey.currentState!.validate()) {
+                                    FocusScope.of(context)
+                                        .requestFocus(FocusNode());
+                                     GoTo(
+                                    context: context,
+                                    screen: SignupScreen(
+                                      name: name.text,
+                                      phoneNumber: phoneNumberController.text,
                                     ),
                                   );
-                                  await Future.delayed(
-                                    Duration(seconds: 2),
-                                  );
-                                  GoTo(
-                                    context: context,
-                                    screen: ProfileScreen(),
-                                  );
-                               }
-                              
-                            ),
+                                  }
+                            
+                                }),
                           ],
                         ),
                       ),
@@ -236,7 +213,3 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
     );
   }
 }
-
-
-
-

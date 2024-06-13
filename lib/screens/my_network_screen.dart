@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../services/firebase_functions.dart';
+import '../services/firestore_functions.dart';
 import '../shared/theme/colors.dart';
 import '../shared/widgets/back_button.dart';
 import '../shared/widgets/button_nav_bar.dart';
 import '../shared/widgets/contact_card.dart';
+import '../shared/widgets/loader.dart';
+
 class MyNetworkScreen extends StatelessWidget {
   const MyNetworkScreen({Key? key}) : super(key: key);
 
@@ -14,11 +16,7 @@ class MyNetworkScreen extends StatelessWidget {
       future: FireBaseServices().getUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: Text('Now is waiting'),
-            ),
-          );
+          return LoaderScreen();
         } else if (snapshot.hasError) {
           return Scaffold(
             body: Center(
@@ -36,6 +34,9 @@ class MyNetworkScreen extends StatelessWidget {
             return FutureBuilder(
               future: FireBaseServices().getNetwork(id: myNetwork),
               builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return LoaderScreen();
+                }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {

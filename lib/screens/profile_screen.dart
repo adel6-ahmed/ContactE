@@ -2,13 +2,14 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../services/firebase_functions.dart';
+import '../services/firestore_functions.dart';
 import '../services/models.dart';
 import '../shared/theme/colors.dart';
 import '../shared/theme/texet.dart';
 import '../shared/widgets/Paction_bottom.dart';
 import '../shared/widgets/back_button.dart';
 import '../shared/widgets/button_nav_bar.dart';
+import '../shared/widgets/loader.dart';
 import 'widgets/social_media_icon.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -19,13 +20,9 @@ class ProfileScreen extends StatelessWidget {
     return FutureBuilder(
       future: FireBaseServices().getUser(),
       builder: (context, AsyncSnapshot<MyUser> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(
-              child: Text('waiting'),
-            ),
-          );
-        } else if (snapshot.hasError) {
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return LoaderScreen();
+          }else if (snapshot.hasError) {
           return Scaffold(
             body: Center(
               child: Text(snapshot.error.toString()),

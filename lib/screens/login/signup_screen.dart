@@ -1,27 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:sad/screens/login/login_screen.dart';
+import 'package:sad/services/auth_service.dart';
 import 'package:sad/shared/theme/colors.dart';
 
 import '../../shared/theme/texet.dart';
 import '../../shared/widgets/action_button.dart';
+import 'package:sad/screens/login/InterestsScreen.dart';
 
-class signup_screen extends StatelessWidget {
+
+class SignupScreen extends StatelessWidget {
+  final String name;
+  final String phoneNumber;
+
+  SignupScreen({required this.name, required this.phoneNumber});
+
   @override
   Widget build(BuildContext context) {
-    return _LoginScreenContent();
+    return _SignupScreenContent(name: name, phoneNumber: phoneNumber);
   }
 }
 
-class _LoginScreenContent extends StatefulWidget {
+class _SignupScreenContent extends StatefulWidget {
+  final String name;
+  final String phoneNumber;
+
+  _SignupScreenContent({required this.name, required this.phoneNumber});
+
   @override
-  _LoginScreenContentState createState() => _LoginScreenContentState();
+  _SignupScreenContentState createState() => _SignupScreenContentState();
 }
 
-class _LoginScreenContentState extends State<_LoginScreenContent> {
+class _SignupScreenContentState extends State<_SignupScreenContent> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late TextEditingController passwordController1;
-
   late GlobalKey<FormState> formKey;
   late FocusNode passwordNode;
   late FocusNode passwordNode1;
@@ -66,13 +78,6 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
           toolbarHeight: 70, // Adjust height as needed
           backgroundColor: Color.fromARGB(255, 28, 33, 32),
           elevation: 0,
-          flexibleSpace: Center(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 30.0,
-              ),
-            ),
-          ),
         ),
         body: Container(
           color: Ldark, // Adjust as needed
@@ -157,7 +162,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                               },
                               focusNode: passwordNode,
                               validator: (value) {
-                                if (passwordController.text.isEmpty) {
+                                if (value == null || value.isEmpty) {
                                   return "Password can't be empty";
                                 }
                                 return null;
@@ -195,9 +200,7 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                                         : Icons.visibility_off,
                                     color: Colors.grey,
                                   ),
-                                  onPressed: () {
-                                    toggleVisibility();
-                                  },
+                                  onPressed: toggleVisibility,
                                 ),
                               ),
                             ),
@@ -246,21 +249,24 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                                         : Icons.visibility_off,
                                     color: Colors.grey,
                                   ),
-                                  onPressed: () {
-                                    toggleVisibility();
-                                  },
+                                  onPressed: toggleVisibility,
                                 ),
                               ),
                             ),
                             SizedBox(height: 10),
                             action_button(
                               title: 'Sign up',
-                              action: () {
+                              action: () async {
                                 if (formKey.currentState!.validate()) {
-                                  print('--------------');
-                                  print(emailController.text);
-                                  print('--------------');
-                                  print(passwordController.text);
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  Auth().createUserByEmail(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                    context: context,
+                                    name: widget.name,
+                                    phoneNumber: widget.phoneNumber,
+                                  );
                                 }
                               },
                             ),
@@ -274,12 +280,12 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                             ),
                             SizedBox(height: 10),
                             action_button(
-                              title: '  LoginUp With Google  ',
+                              title: '  Sign Up With Google  ',
                               action: () {},
                             ),
                             SizedBox(height: 10),
                             action_button(
-                              title: 'LoginUp With Facebook',
+                              title: 'Sign Up With Facebook',
                               action: () {},
                             ),
                             SizedBox(height: 5),
@@ -288,7 +294,8 @@ class _LoginScreenContentState extends State<_LoginScreenContent> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LoginScreen()),
+                                    builder: (context) => LoginScreen(),
+                                  ),
                                 );
                               },
                               child: Text(
