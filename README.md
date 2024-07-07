@@ -1,16 +1,31 @@
 # ContactE
-MOBILE APPLICATION
+This Flutter app uses Al for enhanced contact management and profile creation, with real-time updates from Firebase.
+Features include smart contact suggestions, detailed profiles, seamless navigation, and advanced search.
+
 ![Screenshot_1718253652](https://github.com/adel6-ahmed/ContactE/assets/129671904/8a4615ad-b7f5-4176-8ce9-7cf2d28fa47b)
+
 ![Screenshot_1718253692](https://github.com/adel6-ahmed/ContactE/assets/129671904/b49a261c-019d-4225-96a0-dd38ba38d112)
+
 ![Screenshot_1718253730](https://github.com/adel6-ahmed/ContactE/assets/129671904/327b43a8-dc3a-4ebf-8e0f-9de9af1bef5f)
+
 ![Screenshot_1718253819](https://github.com/adel6-ahmed/ContactE/assets/129671904/5cb6ebb0-b5f7-4d17-b489-7918e1902a72)
+
 ![Screenshot_1718253998](https://github.com/adel6-ahmed/ContactE/assets/129671904/d7ee7172-a696-490c-8cb3-4e9d341891fb)
+
 ![Screenshot_1718254080](https://github.com/adel6-ahmed/ContactE/assets/129671904/29fa15f8-7100-4ce0-9386-c8f1b6784377)
+
 ![Screenshot_1718254867](https://github.com/adel6-ahmed/ContactE/assets/129671904/7f2bcf26-3d58-446f-8304-b77ce91a28c2)
+
 ![Screenshot_1718254871](https://github.com/adel6-ahmed/ContactE/assets/129671904/679b1d9a-cb05-4842-81f0-7cbc41172a20)
+
 ![Screenshot_1718254875](https://github.com/adel6-ahmed/ContactE/assets/129671904/d6061caf-15b7-497a-b3d6-af16dd58459c)
+
 ![Screenshot_1718254881](https://github.com/adel6-ahmed/ContactE/assets/129671904/7c81266f-2861-456f-b6f5-9cc303de2e7b)
+
 ![Screenshot_1718254897](https://github.com/adel6-ahmed/ContactE/assets/129671904/82607629-697a-46b9-9ddf-fde790defdfe)
+
 ![Screenshot_1718274596](https://github.com/adel6-ahmed/ContactE/assets/129671904/186c1ba7-3ae6-43a0-9ac5-fd1b0716cb91)
+
 ![Screenshot_1718274681](https://github.com/adel6-ahmed/ContactE/assets/129671904/ed38ed62-b579-40a4-a097-8953e1f92664)
+
 ![Screenshot_1718276421](https://github.com/adel6-ahmed/ContactE/assets/129671904/c8c05dbe-d659-46c6-aace-d79c6bd70626)
