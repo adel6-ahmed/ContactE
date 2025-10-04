@@ -8,11 +8,12 @@ import '../theme/colors.dart';
 import '../theme/texet.dart';
 
 class ContactCard extends StatelessWidget {
-  ContactCard({
-    Key? key,
+  const ContactCard({
+    super.key,
     required this.userId,
-  }) : super(key: key);
-  String userId;
+  });
+
+  final String userId;
 
   @override
   Widget build(BuildContext context) {

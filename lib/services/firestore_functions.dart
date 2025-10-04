@@ -1,23 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../shared/theme/colors.dart';
-import '../shared/theme/texet.dart';
 import 'models.dart';
 
 class FireBaseServices {
-  var fireStoreref = FirebaseFirestore.instance;
-  var usersColRef = FirebaseFirestore.instance.collection('users');
-  var networksColRef = FirebaseFirestore.instance.collection('networks');
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   
+  CollectionReference get usersColRef => _firestore.collection('users');
+  CollectionReference get networksColRef => _firestore.collection('networks');
+
   Future<void> updateUserSocialMedia({
     required String uid,
     required Map<String, dynamic> socialMedia,
   }) async {
-    var ref = usersColRef.doc(uid);
-    await ref.update({
-      'socialMediaPlatforms': socialMedia,
-    });
+    try {
+      await usersColRef.doc(uid).update({
+        'socialMediaPlatforms': socialMedia,
+      });
+    } catch (e) {
+      throw Exception('Failed to update social media: $e');
+    }
   }
 
   Future<void> createNewUser({
@@ -25,101 +28,135 @@ class FireBaseServices {
     required String uid,
     required String phoneNumber,
     required BuildContext context,
-    required Map<String, dynamic> interests, // Change interests to Map
+    required Map<String, dynamic> interests,
   }) async {
-    var ref = usersColRef.doc(uid);
-    var user = MyUser(
-      img: 'img',
-      name: name,
-      phoneNumber: phoneNumber,
-      interests: interests, // Include interests as a Map
-    );
-    await ref.set(user.toMap());
-    var newRef = networksColRef.doc(uid);
-    var network = MyNetwork(myNetwork: []);
-    await newRef.set(network.toMap());
+    try {
+      final user = MyUser(
+        name: name,
+        phoneNumber: phoneNumber,
+        img: 'https://via.placeholder.com/150',
+        interests: interests,
+        uid: uid,
+      );
+      
+      await usersColRef.doc(uid).set(user.toMap());
+      
+      final network = MyNetwork(myNetwork: []);
+      await networksColRef.doc(uid).set(network.toMap());
+    } catch (e) {
+      throw Exception('Failed to create user: $e');
+    }
   }
 
   Future<List<MyUser>> getSuggestedFriends(String userId) async {
-    var ref = usersColRef.doc(userId);
-    var userDoc = await ref.get();
-    var currentUser = MyUser().fromMap(userDoc.data());
-    var allUsersSnapshot = await usersColRef.get();
-    var allUsers = allUsersSnapshot.docs.map((doc) => MyUser().fromMap(doc.data())).toList();
-
-    List<MyUser> suggestedFriends = [];
-
-    for (var user in allUsers) {
-      if (user.uid != userId) {
-        int commonInterests = currentUser.interests.keys.where((interest) => user.interests.containsKey(interest)).length;
-        double commonInterestPercentage = commonInterests / currentUser.interests.keys.length;
-        if (commonInterestPercentage >= 0.6) {
-          suggestedFriends.add(user);
+    try {
+      final currentUserDoc = await usersColRef.doc(userId).get();
+      if (!currentUserDoc.exists) return [];
+      
+      final currentUserData = currentUserDoc.data() as Map<String, dynamic>?;
+      if (currentUserData == null) return [];
+      
+      final currentUser = MyUser.fromMap(currentUserData, currentUserDoc.id);
+      final allUsersSnapshot = await usersColRef.get();
+      
+      final List<MyUser> suggestedFriends = [];
+      
+      for (final doc in allUsersSnapshot.docs) {
+        if (doc.id != userId) {
+          final userData = doc.data() as Map<String, dynamic>?;
+          if (userData != null) {
+            final user = MyUser.fromMap(userData, doc.id);
+            final commonInterests = currentUser.interests.keys
+                .where((interest) => user.interests.containsKey(interest))
+                .length;
+            
+            final commonInterestPercentage = commonInterests / currentUser.interests.keys.length;
+            if (commonInterestPercentage >= 0.6) {
+              suggestedFriends.add(user);
+            }
+          }
         }
       }
+      return suggestedFriends;
+    } catch (e) {
+      throw Exception('Failed to get suggested friends: $e');
     }
-    return suggestedFriends;
   }
 
   Future<MyUser> getUser() async {
-    var ref = usersColRef.doc('2j8M93CHwcvgL4KfAFaq');
-    var myDoc = await ref.get();
-    var theTrueData = MyUser().fromMap(myDoc.data());
-    theTrueData.uid = ref.id;
-    return theTrueData; 
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser == null) throw Exception('No user logged in');
+      
+      final userDoc = await usersColRef.doc(currentUser.uid).get();
+      if (!userDoc.exists) throw Exception('User not found');
+      
+      final userData = userDoc.data() as Map<String, dynamic>?;
+      if (userData == null) throw Exception('User data is null');
+      
+      return MyUser.fromMap(userData, currentUser.uid);
+    } catch (e) {
+      throw Exception('Failed to get user: $e');
+    }
   }
 
   Future<MyUser> getUserById({required String id}) async {
-    var ref = usersColRef.doc(id);
-    var myDoc = await ref.get();
-    var theTrueData = MyUser().creatFriend(myDoc.data());
-    theTrueData.uid = ref.id;
-    return theTrueData;
+    try {
+      final userDoc = await usersColRef.doc(id).get();
+      if (!userDoc.exists) throw Exception('User not found');
+      
+      final userData = userDoc.data() as Map<String, dynamic>?;
+      if (userData == null) throw Exception('User data is null');
+      
+      return MyUser.fromMap(userData, id);
+    } catch (e) {
+      throw Exception('Failed to get user by ID: $e');
+    }
   }
 
   Future<MyNetwork> getNetwork({required String id}) async {
-    var ref = networksColRef.doc(id);
-    var myDoc = await ref.get();
-    var theTrueData = MyNetwork().fromMap(myDoc.data());
-    return theTrueData;
-  }
-
-  Stream<List<MyUser>> getNetworkByStream() {
-    return FirebaseFirestore.instance.collection('users').snapshots().map(
-      (event) => event.docs.map(
-        (e) => MyUser().fromMap(e.data()),
-      ).toList(),
-    );
-  }
-
-  Future<List<MyUser>> getNetworkbyFuture() async {
-    var ref = usersColRef;
-    var myDocs = await ref.get();
-    var myUsersDocs = myDocs.docs.map((e) => e.data());
-    var theTrueData = myUsersDocs.map((e) => MyUser().fromMap(e));
-    return theTrueData.toList();
+    try {
+      final networkDoc = await networksColRef.doc(id).get();
+      if (!networkDoc.exists) throw Exception('Network not found');
+      
+      final networkData = networkDoc.data() as Map<String, dynamic>?;
+      if (networkData == null) throw Exception('Network data is null');
+      
+      return MyNetwork.fromMap(networkData);
+    } catch (e) {
+      throw Exception('Failed to get network: $e');
+    }
   }
 
   Future<List<MyUser>> searchForContact({required String phoneNumber}) async {
-    var ref = usersColRef;
-    var myDocs = await ref.where('phoneNumber', isEqualTo: phoneNumber).get();
-    var myUsersDocs = myDocs.docs.map((e) => e.data());
-    var theTrueData = myUsersDocs.map((e) => MyUser().fromMap(e));
-    return theTrueData.toList();
+    try {
+      final querySnapshot = await usersColRef
+          .where('phoneNumber', isEqualTo: phoneNumber)
+          .get();
+      
+      return querySnapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>?;
+            return MyUser.fromMap(data ?? {}, doc.id);
+          })
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to search contacts: $e');
+    }
   }
 
   Future<List<Group>> getGroups({required String id}) async {
     try {
-      var ref = usersColRef.doc(id).collection('groups');
-      var myDocs = await ref.get();
-      var groupsDocs = myDocs.docs.map((e) => e.data());
-      var theTrueData = groupsDocs.map((e) => Group().fromMap(e));
-      return theTrueData.toList();
+      final groupsSnapshot = await usersColRef.doc(id).collection('groups').get();
+      
+      return groupsSnapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>?;
+            return Group.fromMap(data ?? {});
+          })
+          .toList();
     } catch (e) {
-      print("Error getting groups: $e");
-      return [];
+      throw Exception('Failed to get groups: $e');
     }
   }
 }
-
-

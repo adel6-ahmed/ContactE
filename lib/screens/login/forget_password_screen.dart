@@ -5,12 +5,12 @@ import '../../shared/theme/texet.dart';
 import '../../shared/widgets/action_button.dart';
 
 class ForgetPasswordScreen extends StatelessWidget {
-  ForgetPasswordScreen({Key? key}) : super(key: key);
-  var emailController = TextEditingController();
-  var passwordController = TextEditingController();
+  ForgetPasswordScreen({super.key});
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    double blueContainerHeight = MediaQuery.of(context).size.height * 0.8;
+    // blueContainerHeight was unused and removed
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -108,7 +108,7 @@ class ForgetPasswordScreen extends StatelessWidget {
                       ),
                     ), // Add your text field for password
                     SizedBox(height: 20),
-                    action_button(
+                    ActionButton(
                         title: '                    Login                    ',
                         action: () {}),
                         SizedBox(height: 150)

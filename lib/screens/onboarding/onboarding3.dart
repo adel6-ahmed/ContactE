@@ -4,11 +4,9 @@ import 'package:sad/screens/home_screen.dart';
 import '../../shared/methods/navigation.dart';
 import '../../shared/theme/colors.dart';
 import '../../shared/widgets/action_button.dart';
-import 'onboarding2.dart';
-import 'onboarding3.dart';
 
 class OnBoarding3 extends StatelessWidget {
-  const OnBoarding3({Key? key}) : super(key: key);
+  const OnBoarding3({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +59,7 @@ class OnBoarding3 extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Colors.white],
+                      colors: const [Colors.transparent, Colors.white],
                     ),
                   ),
                 ),
@@ -72,7 +70,7 @@ class OnBoarding3 extends StatelessWidget {
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 150, right: 100),
-        child: action_button(
+  child: ActionButton(
           title: '         Next          ', 
           
           action: () {

@@ -5,7 +5,7 @@ class ContactChannelCard extends StatelessWidget {
   final String platform;
   final String url;
 
-  ContactChannelCard({required this.platform, required this.url});
+  const ContactChannelCard({super.key, required this.platform, required this.url});
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ class ActionButton extends StatelessWidget {
   final Color buttonColor;
   final Color textColor;
 
-  const ActionButton({
+  const ActionButton({super.key, 
     required this.title,
     required this.onPressed,
     required this.buttonColor,
@@ -17,12 +17,12 @@ class ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: buttonColor, // Using ButtonColor from colors.dart
+      ),
       child: Text(
         title,
         style: TextStyle(color: textColor), // Use provided text color
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: buttonColor, // Using ButtonColor from colors.dart
       ),
     );
   }

@@ -3,5 +3,6 @@
     "java.configuration.runtimes": [
         
 
-    ]
+    ],
+    "cmake.sourceDirectory": "C:/Users/adell/Desktop/CONTACTE/ContactE/linux"
 }

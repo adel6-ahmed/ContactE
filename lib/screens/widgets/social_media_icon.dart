@@ -3,16 +3,17 @@ import 'package:url_launcher/url_launcher.dart';
 
 
 class ContactChanelCard extends StatelessWidget {
-  String platform;
-  String url;
+  final String platform;
+  final String url;
 
-    ContactChanelCard({
-    Key? key,
+  const ContactChanelCard({
+    super.key,
     required this.platform,
     required this.url,
-  }) : super(key: key);
+  });
 
   @override
+
   Widget build(BuildContext context) {
     return Column(
       children: [

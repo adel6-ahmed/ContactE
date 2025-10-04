@@ -4,7 +4,7 @@ class MyUser {
   String img;
   Map<String, dynamic> socialMediaPlatforms;
   String uid;
-  Map<String, dynamic> interests; // Updated to Map
+  Map<String, dynamic> interests;
 
   MyUser({
     this.name = '',
@@ -12,7 +12,7 @@ class MyUser {
     this.phoneNumber = '',
     this.socialMediaPlatforms = const {},
     this.uid = "",
-    this.interests = const {}, // Default to empty map
+    this.interests = const {},
   });
 
   Map<String, dynamic> toMap() {
@@ -21,34 +21,27 @@ class MyUser {
       'phoneNumber': phoneNumber,
       'img': img,
       'socialMediaPlatforms': socialMediaPlatforms,
-      'interests': interests, // Include interests as a Map
+      'interests': interests,
     };
   }
 
-  MyUser fromMap(Map<String, dynamic>? myMap) {
-    if (myMap == null) {
-      return MyUser(); // Return an empty MyUser if myMap is null
+  factory MyUser.fromMap(Map<String, dynamic>? map, String uid) {
+    if (map == null) {
+      return MyUser(uid: uid);
     }
     return MyUser(
-      img: myMap['img'] ?? '',
-      name: myMap['name'] ?? '',
-      phoneNumber: myMap['phoneNumber'] ?? '',
-      socialMediaPlatforms: myMap['socialMediaPlatforms'] ?? {},
-      interests: Map<String, dynamic>.from(myMap['interests'] ?? {}),
+      uid: uid,
+      img: map['img'] ?? '',
+      name: map['name'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
+      socialMediaPlatforms: Map<String, dynamic>.from(map['socialMediaPlatforms'] ?? {}),
+      interests: Map<String, dynamic>.from(map['interests'] ?? {}),
     );
   }
 
-  MyUser creatFriend(Map<String, dynamic>? myMap) {
-    if (myMap == null) {
-      return MyUser(); // Return an empty MyUser if myMap is null
-    }
-    return MyUser(
-      img: myMap['img'] ?? '',
-      name: myMap['name'] ?? '',
-      phoneNumber: myMap['phoneNumber'] ?? '',
-      socialMediaPlatforms: myMap['socialMediaPlatforms'] ?? {},
-      interests: Map<String, dynamic>.from(myMap['interests'] ?? {}),
-    );
+  // تم تصحيح اسم الدالة من creatFriend إلى createFriend
+  MyUser createFriend(Map<String, dynamic>? map, String uid) {
+    return MyUser.fromMap(map, uid);
   }
 }
 
@@ -60,13 +53,18 @@ class MyNetwork {
   });
 
   Map<String, dynamic> toMap() {
-    return {};
+    return {
+      'myNetwork': myNetwork,
+    };
   }
 
-  MyNetwork fromMap(Map<String, dynamic>? myMap) {
+  factory MyNetwork.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      return MyNetwork();
+    }
     return MyNetwork(
-      myNetwork: myMap!['myNetwork'] != null
-          ? List<dynamic>.from(myMap['myNetwork'])
+      myNetwork: map['myNetwork'] != null
+          ? List<dynamic>.from(map['myNetwork'])
           : [],
     );
   }
@@ -76,20 +74,29 @@ class Group {
   String name;
   String img;
   List<dynamic> members;
+  
   Group({
     this.img = '',
     this.name = '',
     this.members = const [],
   });
+  
   Map<String, dynamic> toMap() {
-    return {'name': name, 'img': img, 'members': members};
+    return {
+      'name': name, 
+      'img': img, 
+      'members': members
+    };
   }
 
-  Group fromMap(Map<String, dynamic>? myMap) {
+  factory Group.fromMap(Map<String, dynamic>? map) {
+    if (map == null) {
+      return Group();
+    }
     return Group(
-      img: myMap!['img'],
-      name: myMap['name'],
-      members: myMap['members'],
+      img: map['img'] ?? '',
+      name: map['name'] ?? '',
+      members: List<dynamic>.from(map['members'] ?? []),
     );
   }
 }

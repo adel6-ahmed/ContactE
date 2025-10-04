@@ -1,7 +1,20 @@
+buildscript {
+    ext.kotlin_version = '2.1.10'
+    repositories {
+        google()
+        mavenCentral() // تم التصحيح
+        gradlePluginPortal() // إضافة مستحوبة
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 allprojects {
     repositories {
         google()
-        mavenCentral()
+        mavenCentral() // تم التصحيح من 'martenCentral' إلى 'mavenCentral'
     }
 }
 

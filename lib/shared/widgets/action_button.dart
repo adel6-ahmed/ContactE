@@ -3,30 +3,33 @@ import 'package:sad/shared/theme/texet.dart';
 
 import '../theme/colors.dart';
 
-class action_button extends StatelessWidget {
-  action_button({
-    Key? key,
+export 'animated_action_button.dart';
+
+class ActionButton extends StatelessWidget {
+  const ActionButton({
+    super.key,
     required this.title,
     required this.action,
-    this.ButtonColor,
+    this.buttonColor,
     this.fontSize,
     this.buttonWidth,
   });
+
   final String title;
-  final Color? ButtonColor;
+  final Color? buttonColor;
   final double? fontSize; // New parameter for font size
-  final Function() action;
-  double? buttonWidth;
+  final VoidCallback action;
+  final double? buttonWidth;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50,
-      width:  buttonWidth,
+      width: buttonWidth,
       child: ElevatedButton(
         onPressed: action,
         style: ElevatedButton.styleFrom(
-          backgroundColor: ButtonColor ?? Lyellow,
+          backgroundColor: buttonColor ?? Lyellow,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
           ),
@@ -40,16 +43,17 @@ class action_button extends StatelessWidget {
   }
 }
 
-class action_buttonWithIcon extends StatelessWidget {
-  action_buttonWithIcon(
-      {Key? key,
+class ActionButtonWithIcon extends StatelessWidget {
+  const ActionButtonWithIcon(
+      {super.key,
       required this.title,
       required this.icon,
       required this.action,
-      this.ButtonColor,
+      this.buttonColor,
       this.fontSize});
+
   final String title;
-  final Color? ButtonColor;
+  final Color? buttonColor;
   final IconData icon;
   final VoidCallback action;
   final double? fontSize; // New parameter for font size
@@ -65,7 +69,7 @@ class action_buttonWithIcon extends StatelessWidget {
       ),
       onPressed: action,
       style: ElevatedButton.styleFrom(
-        backgroundColor: ButtonColor ?? Lyellow,
+        backgroundColor: buttonColor ?? Lyellow,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(100),
         ),
@@ -73,3 +77,8 @@ class action_buttonWithIcon extends StatelessWidget {
     );
   }
 }
+
+// Re-export animated action button so older call sites that expect
+// AnimatedActionButton(...) can resolve. The real widget lives in
+// animated_action_button.dart
+// (export is already at the top)

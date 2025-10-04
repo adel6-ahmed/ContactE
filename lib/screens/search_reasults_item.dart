@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sad/screens/contact_screen.dart';
-import 'package:sad/screens/friend_screen.dart';
+import 'package:sad/services/models.dart';
 import 'package:sad/shared/methods/navigation.dart';
-
-import '../../services/models.dart';
-import '../shared/theme/colors.dart';
-import '../shared/theme/texet.dart';
+import 'package:sad/shared/theme/colors.dart';
+import 'package:sad/shared/theme/texet.dart';
 
 
 class SearchResultsItem extends StatelessWidget {
-  SearchResultsItem ({
-    Key? key,
+  const SearchResultsItem({
+    super.key,
     required this.contact,
-  }) : super(key: key);
-  MyUser contact;
+  });
+
+  final MyUser contact;
 
   @override
   Widget build(BuildContext context) {
@@ -28,18 +27,13 @@ class SearchResultsItem extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 38.5,
-                  backgroundImage: NetworkImage(contact!.img),
+                  backgroundImage: NetworkImage(contact.img),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      contact.name,
-                      style: title1,
-                    ),
+                    Text(contact.name, style: title1),
                     Text(
                       contact.phoneNumber,
                       style: title1.merge(

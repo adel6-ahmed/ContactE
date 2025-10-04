@@ -6,17 +6,17 @@ import '../../screens/group_screen.dart';
 import '../../screens/home_screen.dart';
 import '../../screens/my_network_screen.dart';
 import '../../screens/profile_screen.dart';
-
 import '../methods/navigation.dart';
 import '../theme/colors.dart';
 
-class ButtomNavBar extends StatelessWidget {
-  ButtomNavBar({
+class BottomNavBar extends StatelessWidget {
+  const BottomNavBar({
     super.key,
     this.selectedItemColor,
   });
+
   static int index = 2;
-  Color? selectedItemColor;
+  final Color? selectedItemColor;
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -29,7 +29,7 @@ class ButtomNavBar extends StatelessWidget {
         selectedItemColor: selectedItemColor ?? Lyellow,
         currentIndex: index,
         type: BottomNavigationBarType.fixed,
-        items: [
+        items: const [
           BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.earthAfrica), label: ''),
           BottomNavigationBarItem(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../theme/colors.dart';
@@ -9,7 +8,7 @@ class SocialMediaIcon extends StatelessWidget {
   final String platform;
   final Uri url;
 
-  const SocialMediaIcon({
+  const SocialMediaIcon({super.key, 
     required this.platform,
     required this.url,
   });

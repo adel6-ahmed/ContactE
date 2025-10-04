@@ -28,15 +28,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -54,7 +48,7 @@ class DefaultFirebaseOptions {
     appId: '1:822442362968:android:e9bfcb32e4e9741299222d',
     messagingSenderId: '822442362968',
     projectId: 'contacte-b2228',
-    storageBucket: 'contacte-b2228.appspot.com',
+    storageBucket: 'contacte-b2228.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -62,7 +56,27 @@ class DefaultFirebaseOptions {
     appId: '1:822442362968:ios:7bf92f6a01e9ef7599222d',
     messagingSenderId: '822442362968',
     projectId: 'contacte-b2228',
-    storageBucket: 'contacte-b2228.appspot.com',
+    storageBucket: 'contacte-b2228.firebasestorage.app',
     iosBundleId: 'com.example.sad',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCXFl0Ira4k2dxBe7fSstdKGac3hCxITnk',
+    appId: '1:822442362968:ios:7bf92f6a01e9ef7599222d',
+    messagingSenderId: '822442362968',
+    projectId: 'contacte-b2228',
+    storageBucket: 'contacte-b2228.firebasestorage.app',
+    iosBundleId: 'com.example.sad',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCqP-Se_shkNJAAvPcdUlf7WbrmIgYalsY',
+    appId: '1:822442362968:web:39ca331bbbb94adc99222d',
+    messagingSenderId: '822442362968',
+    projectId: 'contacte-b2228',
+    authDomain: 'contacte-b2228.firebaseapp.com',
+    storageBucket: 'contacte-b2228.firebasestorage.app',
+    measurementId: 'G-W6JD6M0KH7',
+  );
+
 }

@@ -7,7 +7,8 @@ import 'package:sad/shared/theme/texet.dart';
 
 class GroupItem extends StatelessWidget {
   GroupItem({super.key, required this.myGroup});
-   Group myGroup;
+
+  final Group myGroup;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
