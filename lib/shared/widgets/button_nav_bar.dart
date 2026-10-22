@@ -5,6 +5,7 @@ import '../../screens/group_screen.dart';
 import '../../screens/home_screen.dart';
 import '../../screens/my_network_screen.dart';
 import '../../screens/profile_screen.dart';
+import '../../l10n/strings.dart';
 
 /// Material 3 bottom navigation with labels. Switching tabs replaces the current screen
 /// (no animation) instead of pushing a new route each time, so the back stack and memory
@@ -17,13 +18,13 @@ class BottomNavBar extends StatelessWidget {
 
   static int index = 2;
 
-  static const _destinations = [
-    NavigationDestination(icon: Icon(Icons.public_outlined), selectedIcon: Icon(Icons.public), label: 'شبكتي'),
-    NavigationDestination(icon: Icon(Icons.groups_outlined), selectedIcon: Icon(Icons.groups), label: 'مجموعاتي'),
-    NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: 'الرئيسية'),
-    NavigationDestination(icon: Icon(Icons.auto_awesome_outlined), selectedIcon: Icon(Icons.auto_awesome), label: 'برادي'),
-    NavigationDestination(icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person), label: 'ملفي'),
-  ];
+  static List<NavigationDestination> get _destinations => [
+        NavigationDestination(icon: const Icon(Icons.public_outlined), selectedIcon: const Icon(Icons.public), label: S.current.navNetwork),
+        NavigationDestination(icon: const Icon(Icons.groups_outlined), selectedIcon: const Icon(Icons.groups), label: S.current.navGroups),
+        NavigationDestination(icon: const Icon(Icons.home_outlined), selectedIcon: const Icon(Icons.home), label: S.current.navHome),
+        NavigationDestination(icon: const Icon(Icons.auto_awesome_outlined), selectedIcon: const Icon(Icons.auto_awesome), label: S.current.navBradi),
+        NavigationDestination(icon: const Icon(Icons.person_outline), selectedIcon: const Icon(Icons.person), label: S.current.navProfile),
+      ];
 
   static Widget _screenFor(int i) => switch (i) {
         0 => MyNetworkScreen(),
@@ -36,7 +37,7 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: S.current.dir,
       child: NavigationBar(
         selectedIndex: index,
         destinations: _destinations,

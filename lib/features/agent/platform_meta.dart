@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../design/tokens.dart';
+import '../../l10n/strings.dart';
 
 class PlatformMeta {
-  const PlatformMeta(this.id, this.name, this.icon, this.color, this.connectHint);
+  const PlatformMeta(this.id, this.icon, this.color);
   final String id;
-  final String name;
   final FaIconData icon;
   final Color color;
-  final String connectHint;
+  String get name => S.current.platformName(id);
+  String get connectHint => S.current.platformHint(id);
 }
 
 const platforms = <PlatformMeta>[
-  PlatformMeta('instagram', 'إنستغرام', FontAwesomeIcons.instagram, AppTokens.instagram,
-      'حساب أعمال أو صانع محتوى مرتبط بصفحة فيسبوك.'),
-  PlatformMeta('facebook', 'فيسبوك', FontAwesomeIcons.facebook, AppTokens.facebook, 'صفحة فيسبوك تديرها.'),
-  PlatformMeta('linkedin', 'لينكدإن', FontAwesomeIcons.linkedin, AppTokens.linkedin, 'حسابك الشخصي على لينكدإن.'),
-  PlatformMeta('x', 'X', FontAwesomeIcons.xTwitter, AppTokens.x, 'يتطلب النشر المباشر اشتراكًا مدفوعًا في واجهة X.'),
+  PlatformMeta('instagram', FontAwesomeIcons.instagram, AppTokens.instagram),
+  PlatformMeta('facebook', FontAwesomeIcons.facebook, AppTokens.facebook),
+  PlatformMeta('linkedin', FontAwesomeIcons.linkedin, AppTokens.linkedin),
+  PlatformMeta('x', FontAwesomeIcons.xTwitter, AppTokens.x),
 ];
 
 PlatformMeta platformMeta(String id) =>
-    platforms.firstWhere((p) => p.id == id, orElse: () => PlatformMeta(id, id, FontAwesomeIcons.globe, AppTokens.textMuted, ''));
+    platforms.firstWhere((p) => p.id == id, orElse: () => PlatformMeta(id, FontAwesomeIcons.globe, AppTokens.textMuted));

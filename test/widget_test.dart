@@ -10,6 +10,7 @@ import 'package:sad/features/agent/agent_screen.dart';
 import 'package:sad/features/agent/draft_card.dart';
 import 'package:sad/features/card/my_card_screen.dart';
 import 'package:sad/features/card/vcard.dart';
+import 'package:sad/l10n/strings.dart';
 import 'package:sad/services/models.dart';
 
 Map<String, dynamic> _proposal({String status = 'pending', String text = 'Hello from ContactE'}) => {
@@ -23,6 +24,8 @@ http.Response _json(Object body, [int status = 200]) =>
 Widget _wrap(Widget child) => MaterialApp(theme: ThemeData.dark(useMaterial3: true), home: child);
 
 void main() {
+  setUp(() => S.load('ar'));
+
   group('vCard', () {
     test('contains name, phone and https social links only', () {
       final v = buildVCard(name: 'Adel; Ahmed', phone: '+90 501 342 24 54', socials: {
@@ -108,5 +111,16 @@ void main() {
     final qr = tester.widget<QrImageView>(find.byType(QrImageView));
     expect(qr.semanticsLabel, 'رمز QR لبطاقة Adel');
     expect(find.text('مشاركة البطاقة'), findsOneWidget);
+  });
+
+  testWidgets('English UI follows the device language', (tester) async {
+    S.load('en');
+    final api = AgentApi(baseUrl: 'http://test', idToken: () async => 't', client: MockClient((_) async => _json([])));
+    await tester.pumpWidget(_wrap(AgentScreen(api: api)));
+    expect(find.text("Hi! I'm Bradi."), findsOneWidget);
+    expect(find.text('Write a launch post for a new service on Instagram and LinkedIn'), findsOneWidget);
+    expect(find.text('Bradi'), findsOneWidget); // navigation label
+    final dir = tester.widget<Directionality>(find.byType(Directionality).first);
+    expect(dir.textDirection, TextDirection.ltr);
   });
 }

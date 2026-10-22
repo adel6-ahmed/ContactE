@@ -11,6 +11,7 @@ import 'package:sad/shared/widgets/animated_text_field.dart';
 import '../features/agent/agent_screen.dart';
 import '../features/card/my_card_screen.dart';
 import 'SuggestionScreen.dart';
+import '../l10n/strings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -254,18 +255,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   Widget _buildQuickActions() {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     final actions = [
-      (Icons.qr_code_2_rounded, 'بطاقتي الرقمية', 'شارك جهة اتصالك برمز QR', _openCard),
-      (Icons.auto_awesome, 'برادي', 'أدر حساباتك على السوشيال', _toggleChatbot),
+      (Icons.qr_code_2_rounded, S.current.myCard, S.current.cardSubtitle, _openCard),
+      (Icons.auto_awesome, S.current.navBradi, S.current.bradiSubtitle, _toggleChatbot),
       if (uid != null)
-        (Icons.person_add_alt_1_rounded, 'اقتراحات', 'أشخاص قد تعرفهم',
+        (Icons.person_add_alt_1_rounded, S.current.suggestionsTitle, S.current.suggestionsSubtitle,
             () => GoTo(context: context, screen: SuggestionScreen(userId: uid))),
     ];
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: S.current.dir,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Text('إجراءات سريعة', style: Theme.of(context).textTheme.titleMedium),
+          Text(S.current.quickActions, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
           for (final (icon, title, subtitle, onTap) in actions) ...[
             Card(
@@ -277,7 +278,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ),
                 title: Text(title, style: Theme.of(context).textTheme.titleSmall),
                 subtitle: Text(subtitle),
-                trailing: const Icon(Icons.chevron_left_rounded),
+                trailing: Icon(S.current.isArabic ? Icons.chevron_left_rounded : Icons.chevron_right_rounded),
                 onTap: onTap,
               ),
             ),
