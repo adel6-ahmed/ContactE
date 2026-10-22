@@ -1,30 +1,112 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:sad/features/agent/agent_api.dart';
+import 'package:sad/features/agent/agent_screen.dart';
+import 'package:sad/features/agent/draft_card.dart';
+import 'package:sad/features/card/my_card_screen.dart';
+import 'package:sad/features/card/vcard.dart';
+import 'package:sad/services/models.dart';
 
-import 'package:sad/main.dart';
+Map<String, dynamic> _proposal({String status = 'pending', String text = 'Hello from ContactE'}) => {
+      'id': 'prp_1', 'kind': 'post', 'platform': 'x', 'text': text, 'status': status,
+      'media_url': null, 'scheduled_for': null, 'result': null,
+    };
+
+http.Response _json(Object body, [int status = 200]) =>
+    http.Response.bytes(utf8.encode(jsonEncode(body)), status, headers: {'content-type': 'application/json'});
+
+Widget _wrap(Widget child) => MaterialApp(theme: ThemeData.dark(useMaterial3: true), home: child);
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('vCard', () {
+    test('contains name, phone and https social links only', () {
+      final v = buildVCard(name: 'Adel; Ahmed', phone: '+90 501 342 24 54', socials: {
+        'Instagram': 'https://instagram.com/adel',
+        'tiktok': 'not-a-url',
+      });
+      expect(v, startsWith('BEGIN:VCARD\r\nVERSION:3.0'));
+      expect(v, contains(r'FN:Adel\; Ahmed'));
+      expect(v, contains('TEL;TYPE=CELL:+905013422454'));
+      expect(v, contains('X-SOCIALPROFILE;TYPE=instagram:https://instagram.com/adel'));
+      expect(v, isNot(contains('not-a-url')));
+      expect(v, endsWith('END:VCARD'));
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    test('empty name falls back', () {
+      expect(buildVCard(name: '  '), contains('FN:ContactE'));
+    });
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  group('Agent', () {
+    late List<http.Request> requests;
+    AgentApi api(Future<http.Response> Function(http.Request) handler) {
+      requests = [];
+      return AgentApi(
+        baseUrl: 'http://test',
+        idToken: () async => 'firebase-id-token',
+        client: MockClient((r) {
+          requests.add(r);
+          return handler(r);
+        }),
+      );
+    }
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    testWidgets('sends the Firebase token and history, shows reply and drafts', (tester) async {
+      final a = api((r) async => r.url.path == '/agent/chat'
+          ? _json({'reply': 'جهزت مسودة.', 'proposals': [_proposal()]})
+          : _json([]));
+      await tester.pumpWidget(_wrap(AgentScreen(api: a)));
+      await tester.enterText(find.byType(TextField), 'منشور عن الإطلاق');
+      await tester.tap(find.byTooltip('إرسال'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('جهزت مسودة.'), findsOneWidget);
+      expect(find.text('Hello from ContactE'), findsOneWidget);
+      expect(find.text('بانتظار تأكيدك'), findsOneWidget);
+      final chat = requests.singleWhere((r) => r.url.path == '/agent/chat');
+      expect(chat.headers['Authorization'], 'Bearer firebase-id-token');
+      expect(jsonDecode(chat.body)['message'], 'منشور عن الإطلاق');
+    });
+
+    testWidgets('a draft is only sent when the user taps Confirm', (tester) async {
+      final a = api((r) async => r.url.path.endsWith('/confirm')
+          ? _json(_proposal(status: 'published'))
+          : _json({}));
+      await tester.pumpWidget(_wrap(Scaffold(body: Directionality(
+        textDirection: TextDirection.rtl,
+        child: DraftCard(proposal: Proposal.fromJson(_proposal()), api: a),
+      ))));
+      expect(requests, isEmpty);
+      await tester.tap(find.text('تأكيد'));
+      await tester.pumpAndSettle();
+      expect(requests.single.url.path, '/proposals/prp_1/confirm');
+      expect(find.text('منشور'), findsOneWidget); // status chip
+      expect(find.text('تأكيد'), findsNothing);
+    });
+
+    testWidgets('backend errors are shown, not thrown', (tester) async {
+      final a = api((r) async => _json({'detail': 'the assistant is unavailable right now'}, 503));
+      await tester.pumpWidget(_wrap(AgentScreen(api: a)));
+      await tester.enterText(find.byType(TextField), 'hi');
+      await tester.tap(find.byTooltip('إرسال'));
+      await tester.pumpAndSettle();
+      expect(find.text('the assistant is unavailable right now'), findsOneWidget);
+    });
+  });
+
+  testWidgets('digital card renders name and QR', (tester) async {
+    await tester.pumpWidget(_wrap(Scaffold(body: Directionality(
+      textDirection: TextDirection.rtl,
+      child: CardView(user: MyUser(name: 'Adel', phoneNumber: '+222 1234')),
+    ))));
+    expect(find.text('Adel'), findsOneWidget);
+    final qr = tester.widget<QrImageView>(find.byType(QrImageView));
+    expect(qr.semanticsLabel, 'رمز QR لبطاقة Adel');
+    expect(find.text('مشاركة البطاقة'), findsOneWidget);
   });
 }

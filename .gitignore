@@ -4,13 +4,11 @@
 *.swp
 .DS_Store
 
-# IntelliJ / Android Studio
+# IntelliJ / Android Studio / VS Code
 *.iml
 *.ipr
 *.iws
 .idea/
-
-# VS Code (اختياري)
 .vscode/
 
 # Flutter / Dart
@@ -29,10 +27,23 @@ build/
 .gradle_tmp/
 local.properties
 
-# Python / Flask
-*.pyc
-__pycache__/
-instance/
+# Secrets — never commit
 .env
+.env.*
+!.env.example
+*firebase-adminsdk*.json
+*service-account*.json
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+myenv/
+.venv/
+instance/
 *.sqlite3
-*.json
+agent_backend/data/
+agent_backend/.pydeps/
