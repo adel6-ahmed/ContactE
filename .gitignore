@@ -46,3 +46,4 @@ myenv/
 instance/
 *.sqlite3
 agent_backend/data/
+agent_backend/.pydeps/

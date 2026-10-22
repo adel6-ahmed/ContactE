@@ -29,6 +29,9 @@ class Settings:
     meta_graph_version: str = field(default_factory=lambda: os.getenv("META_GRAPH_VERSION", "v21.0"))
     linkedin_version: str = field(default_factory=lambda: os.getenv("LINKEDIN_VERSION", "202410"))
 
+    # Browser origins allowed to call the API (Flutter web); comma-separated, empty = none
+    cors_origins: str = field(default_factory=lambda: os.getenv("CORS_ORIGINS", ""))
+
     allow_dev_auth_on_non_local: bool = field(default_factory=lambda: _bool("ALLOW_DEV_AUTH_ON_NON_LOCAL"))
 
 

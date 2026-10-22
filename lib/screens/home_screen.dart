@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sad/screens/search_results.dart';
@@ -7,7 +8,9 @@ import 'package:sad/shared/theme/texet.dart';
 import 'package:sad/shared/widgets/action_button.dart';
 import 'package:sad/shared/widgets/button_nav_bar.dart';
 import 'package:sad/shared/widgets/animated_text_field.dart';
-import 'chatbot_screen.dart';
+import '../features/agent/agent_screen.dart';
+import '../features/card/my_card_screen.dart';
+import 'SuggestionScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,12 +21,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   final TextEditingController _phoneNumberController = TextEditingController();
-  bool _isChatbotVisible = false;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _slideAnimation;
   late Animation<double> _scaleAnimation;
-  late Animation<Offset> _chatbotSlideAnimation;
 
   @override
   void initState() {
@@ -55,15 +56,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
     );
     
-    _chatbotSlideAnimation = Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
     
     _animationController.forward();
   }
@@ -75,14 +67,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  /// Opens Bradi, the social-media agent (the old in-app OpenAI chatbot is gone: the AI now
+  /// runs on the agent backend, so no API key ships inside the app).
   void _toggleChatbot() {
-    setState(() {
-      _isChatbotVisible = !_isChatbotVisible;
-    });
-    if (_isChatbotVisible) {
-      _animationController.forward();
-    }
+    BottomNavBar.index = 3;
+    Navigator.of(context).pushReplacement(PageRouteBuilder(
+      pageBuilder: (_, __, ___) => const AgentScreen(),
+      transitionDuration: Duration.zero,
+    ));
   }
+
+  void _openCard() => GoTo(context: context, screen: const MyCardScreen());
 
   void _searchContact() {
     if (_phoneNumberController.text.trim().isNotEmpty) {
@@ -120,14 +115,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           // المحتوى الرئيسي
           _buildMainContent(),
 
-          // زر الشات بوت العائم
-          if (!_isChatbotVisible) _buildFloatingChatbotButton(),
-
-          // شاشة الشات بوت - تظهر من زر الشات بوت
-          if (_isChatbotVisible)
-            Positioned.fill(
-              child: _buildChatbotScreen(),
-            ),
+          // زر برادي العائم
+          _buildFloatingChatbotButton(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(),
@@ -245,8 +234,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     
                     // Search Section
                     _buildSearchSection(),
-                    
-                    const SizedBox(height: 80),
+
+                    const SizedBox(height: 32),
+
+                    // Quick actions
+                    _buildQuickActions(),
+
+                    const SizedBox(height: 110),
                   ],
                 ),
               ),
@@ -254,6 +248,43 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         );
       },
+    );
+  }
+
+  Widget _buildQuickActions() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final actions = [
+      (Icons.qr_code_2_rounded, 'بطاقتي الرقمية', 'شارك جهة اتصالك برمز QR', _openCard),
+      (Icons.auto_awesome, 'برادي', 'أدر حساباتك على السوشيال', _toggleChatbot),
+      if (uid != null)
+        (Icons.person_add_alt_1_rounded, 'اقتراحات', 'أشخاص قد تعرفهم',
+            () => GoTo(context: context, screen: SuggestionScreen(userId: uid))),
+    ];
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('إجراءات سريعة', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 12),
+          for (final (icon, title, subtitle, onTap) in actions) ...[
+            Card(
+              child: ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                leading: CircleAvatar(
+                  backgroundColor: Lyellow.withValues(alpha: 0.15),
+                  child: Icon(icon, color: Lyellow),
+                ),
+                title: Text(title, style: Theme.of(context).textTheme.titleSmall),
+                subtitle: Text(subtitle),
+                trailing: const Icon(Icons.chevron_left_rounded),
+                onTap: onTap,
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+        ]),
+      ),
     );
   }
 
@@ -542,93 +573,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChatbotScreen() {
-    return SlideTransition(
-      position: _chatbotSlideAnimation,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Ldark,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            bottomLeft: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.6),
-              blurRadius: 50,
-              spreadRadius: 10,
-              offset: const Offset(-5, 0),
-            ),
-          ],
-        ),
-        child: Stack(
-          children: [
-            // خلفية متدرجة للشات بوت
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [
-                    Ldark,
-                    const Color(0xFF1a1f1e),
-                    const Color(0xFF151918),
-                  ],
-                ),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  bottomLeft: Radius.circular(30),
-                ),
-              ),
-            ),
-            
-            // زر الإغلاق في الزاوية
-            Positioned(
-              top: 50,
-              right: 20,
-              child: GestureDetector(
-                onTap: _toggleChatbot,
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.close_rounded,
-                    color: Lyellow,
-                    size: 22,
-                  ),
-                ),
-              ),
-            ),
-            
-            // محتوى الشات بوت
-            Positioned.fill(
-              left: 20,
-              right: 20,
-              top: 100,
-              bottom: 100, // مساحة للـ navbar
-              child: ChatBotScreen(
-                isDarkMode: true,
-                onClose: _toggleChatbot,
-                isEmbedded: true, // إضافة خاصية للتضمين
-              ),
-            ),
-          ],
         ),
       ),
     );

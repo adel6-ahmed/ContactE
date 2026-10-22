@@ -1,21 +1,27 @@
 // shared/theme/colors.dart
+//
+// Legacy palette names used across the existing screens, remapped (2026-10) onto the new
+// design tokens in lib/design/tokens.dart so every screen picks up the refreshed look.
+// New code should use Theme.of(context).colorScheme / AppTokens instead of these.
 import 'package:flutter/material.dart';
 
+import '../../design/tokens.dart';
+
 // ألوان أساسية
-const Color navy = Color.fromRGBO(20, 33, 61, 1);
+const Color navy = AppTokens.navy;
 const Color black = Colors.black;
-const Color gri = Color.fromARGB(255, 129, 133, 137);
-const Color yellowDark = Color.fromARGB(255, 19, 32, 62);
-const Color light = Colors.white;
+const Color gri = AppTokens.textMuted;
+const Color yellowDark = AppTokens.navyDeep;
+const Color light = AppTokens.textPrimary;
 const Color transparent = Colors.transparent;
-const Color white = Color(0xFFFFFFFF);
+const Color white = AppTokens.textPrimary;
 
 // ألوان مخصصة
-const Color yellow = Color.fromARGB(255, 142, 124, 16);
-const Color adel = Color.fromARGB(255, 252, 205, 76);
-const Color red = Color.fromARGB(255, 255, 71, 76);
-const Color Lyellow = Color.fromARGB(255, 255, 215, 0);
+const Color yellow = AppTokens.amberDeep;
+const Color adel = AppTokens.amber;
+const Color red = AppTokens.danger;
+const Color Lyellow = AppTokens.amber;
 
 // ألوان واجهة المستخدم
-const Color Ldark = Color(0xFF1C1C1C);
-const Color BottomNavBarColor = Color.fromARGB(191, 28, 33, 32);
+const Color Ldark = AppTokens.background;
+const Color BottomNavBarColor = AppTokens.surfaceRaised;

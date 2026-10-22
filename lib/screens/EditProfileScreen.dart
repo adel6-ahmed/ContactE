@@ -118,7 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _buildSocialMediaField({
     required TextEditingController controller,
     required String platform,
-    required IconData icon,
+    required FaIconData icon,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -129,7 +129,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.only(left: 8, bottom: 8),
             child: Row(
               children: [
-                Icon(
+                FaIcon(
                   icon,
                   color: Lyellow,
                   size: 18,
@@ -199,7 +199,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           );
   }
 
-  IconData _getPlatformIcon(String platform) {
+  FaIconData _getPlatformIcon(String platform) {
     switch (platform.toLowerCase()) {
       case 'youtube':
         return FontAwesomeIcons.youtube;
@@ -214,7 +214,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       case 'instagram':
         return FontAwesomeIcons.instagram;
       default:
-        return Icons.link;
+        return FontAwesomeIcons.link;
     }
   }
 

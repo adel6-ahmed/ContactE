@@ -15,6 +15,7 @@ except ImportError:
     pass
 
 from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from .agent import Agent, ClaudeLLM, _parse_time
@@ -60,6 +61,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None, age
                            ApiConnector(settings), settings.agent_max_steps)
     current_user = make_current_user(settings)
     app = FastAPI(title="ContactE agent", version="1.0")
+    origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+    if origins:
+        app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["*"],
+                           allow_headers=["Authorization", "Content-Type", "X-Dev-User"])
 
     def own(user: str, pid: str) -> dict:
         p = store.proposal(user, pid)
