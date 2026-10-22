@@ -10,6 +10,7 @@ import '../../design/tokens.dart';
 import '../../services/models.dart';
 import '../agent/platform_meta.dart';
 import 'vcard.dart';
+import '../../l10n/strings.dart';
 
 /// Digital business card: a QR code holding a standard vCard (scan with any camera to save the
 /// contact), plus one-tap sharing of the same card.
@@ -26,16 +27,16 @@ class MyCardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: S.current.dir,
       child: Scaffold(
-        appBar: AppBar(title: const Text('بطاقتي الرقمية')),
+        appBar: AppBar(title: Text(S.current.myCard)),
         body: FutureBuilder<MyUser?>(
           future: _load(),
           builder: (context, snap) {
             if (snap.connectionState != ConnectionState.done) return const Center(child: CircularProgressIndicator());
             final user = snap.data;
             if (user == null) {
-              return const Center(child: Text('سجّل الدخول لعرض بطاقتك.'));
+              return Center(child: Text(S.current.signInForCard));
             }
             return CardView(user: user, email: FirebaseAuth.instance.currentUser?.email);
           },
@@ -76,13 +77,13 @@ class CardView extends StatelessWidget {
               backgroundImage: user.img.startsWith('http') && !user.img.contains('placeholder') ? NetworkImage(user.img) : null,
               child: user.img.startsWith('http') && !user.img.contains('placeholder')
                   ? null
-                  : Text(user.name.isEmpty ? '؟' : user.name.characters.first,
+                  : Text(user.name.isEmpty ? '?' : user.name.characters.first,
                       style: const TextStyle(color: AppTokens.onAmber, fontSize: 24, fontWeight: FontWeight.w700)),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(user.name.isEmpty ? 'مستخدم ContactE' : user.name, style: theme.textTheme.titleLarge),
+                Text(user.name.isEmpty ? S.current.defaultUser : user.name, style: theme.textTheme.titleLarge),
                 if (user.phoneNumber.isNotEmpty)
                   Text(user.phoneNumber, textDirection: TextDirection.ltr, style: theme.textTheme.bodyMedium),
               ]),
@@ -97,12 +98,11 @@ class CardView extends StatelessWidget {
               size: 210,
               backgroundColor: Colors.white,
               errorCorrectionLevel: QrErrorCorrectLevel.M,
-              semanticsLabel: 'رمز QR لبطاقة ${user.name}',
+              semanticsLabel: S.current.qrLabel(user.name),
             ),
           ),
           const SizedBox(height: 12),
-          Text('وجّه كاميرا أي هاتف إلى الرمز لحفظ جهة الاتصال.',
-              textAlign: TextAlign.center, style: theme.textTheme.bodySmall),
+          Text(S.current.scanHint, textAlign: TextAlign.center, style: theme.textTheme.bodySmall),
           if (links.isNotEmpty) ...[
             const SizedBox(height: 16),
             Wrap(spacing: 8, runSpacing: 8, alignment: WrapAlignment.center, children: [
@@ -119,18 +119,18 @@ class CardView extends StatelessWidget {
       FilledButton.icon(
         onPressed: () => SharePlus.instance.share(ShareParams(text: vcard, subject: user.name)),
         icon: const Icon(Icons.ios_share),
-        label: const Text('مشاركة البطاقة'),
+        label: Text(S.current.shareCard),
       ),
       const SizedBox(height: 10),
       OutlinedButton.icon(
         onPressed: () async {
           await Clipboard.setData(ClipboardData(text: vcard));
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('تم نسخ البطاقة.')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.current.copied)));
           }
         },
         icon: const Icon(Icons.copy_rounded),
-        label: const Text('نسخ'),
+        label: Text(S.current.copy),
       ),
     ]);
   }

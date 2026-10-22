@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../../l10n/strings.dart';
 
 /// Client for the agent backend (agent_backend/). The app never holds an AI key or a
 /// social-media token: it sends the signed-in user's Firebase ID token only.
@@ -35,7 +36,7 @@ class AgentApi {
     } catch (_) {
       token = null; // Firebase not initialised or session expired
     }
-    if (token == null) throw AgentException('سجّل الدخول أولًا لاستخدام المساعد.');
+    if (token == null) throw AgentException(S.current.signInFirst);
     headers['Authorization'] = 'Bearer $token';
     return headers;
   }
@@ -54,12 +55,12 @@ class AgentApi {
       };
       r = await request.timeout(const Duration(seconds: 90));
     } on Exception {
-      throw AgentException('تعذّر الاتصال بالخادم. تحقق من الإنترنت ثم حاول مجددًا.');
+      throw AgentException(S.current.networkError);
     }
     final decoded = r.body.isEmpty ? null : jsonDecode(utf8.decode(r.bodyBytes));
     if (r.statusCode >= 400) {
       final detail = decoded is Map ? decoded['detail']?.toString() : null;
-      throw AgentException(detail ?? 'حدث خطأ (${r.statusCode}).', statusCode: r.statusCode);
+      throw AgentException(detail ?? S.current.httpError(r.statusCode), statusCode: r.statusCode);
     }
     return decoded;
   }

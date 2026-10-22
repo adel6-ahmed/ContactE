@@ -5,6 +5,7 @@ import 'agent_api.dart';
 import 'draft_card.dart';
 import 'social_accounts_screen.dart';
 import '../../shared/widgets/button_nav_bar.dart';
+import '../../l10n/strings.dart';
 
 /// Bradi, the social-media agent: chat on one tab, pending drafts on the other.
 class AgentScreen extends StatefulWidget {
@@ -23,13 +24,6 @@ class _Message {
   final List<Proposal> proposals;
   final bool error;
 }
-
-const _suggestions = [
-  'جهّز منشورًا لإطلاق خدمة جديدة على إنستغرام ولينكدإن',
-  'اقترح خطة محتوى لأسبوع مع أوقات نشر',
-  'اقرأ آخر التعليقات على إنستغرام واقترح ردودًا',
-  'حوّل هذه الفكرة إلى منشور قصير لـ X',
-];
 
 class _AgentScreenState extends State<AgentScreen> with SingleTickerProviderStateMixin {
   late final AgentApi api = widget.api ?? AgentApi();
@@ -97,24 +91,24 @@ class _AgentScreenState extends State<AgentScreen> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl,
+      textDirection: S.current.dir,
       child: Scaffold(
         appBar: AppBar(
-          title: const Row(children: [
-            CircleAvatar(radius: 16, backgroundColor: AppTokens.amber,
+          title: Row(children: [
+            const CircleAvatar(radius: 16, backgroundColor: AppTokens.amber,
                 child: Icon(Icons.auto_awesome, size: 18, color: AppTokens.onAmber)),
-            SizedBox(width: 10),
-            Text('برادي · مساعد السوشيال'),
+            const SizedBox(width: 10),
+            Text(S.current.agentTitle),
           ]),
           actions: [
             IconButton(
-              tooltip: 'الحسابات المرتبطة',
+              tooltip: S.current.linkedAccounts,
               icon: const Icon(Icons.manage_accounts_outlined),
               onPressed: () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => SocialAccountsScreen(api: api))),
             ),
           ],
-          bottom: TabBar(controller: tabs, tabs: const [Tab(text: 'المحادثة'), Tab(text: 'المسودات')]),
+          bottom: TabBar(controller: tabs, tabs: [Tab(text: S.current.tabChat), Tab(text: S.current.tabDrafts)]),
         ),
         body: TabBarView(controller: tabs, children: [_chat(context), _drafts(context)]),
         bottomNavigationBar: const BottomNavBar(),
@@ -128,13 +122,12 @@ class _AgentScreenState extends State<AgentScreen> with SingleTickerProviderStat
       Expanded(
         child: messages.isEmpty
             ? ListView(padding: const EdgeInsets.all(AppTokens.space5), children: [
-                Text('أهلًا! أنا برادي.', style: theme.textTheme.headlineSmall),
+                Text(S.current.agentHello, style: theme.textTheme.headlineSmall),
                 const SizedBox(height: 8),
-                Text('أكتب منشوراتك، وأكيّفها لكل منصة، وأقترح ردودًا على التعليقات وأوقات النشر. '
-                    'لا يُنشر شيء قبل أن تؤكده أنت.', style: theme.textTheme.bodyMedium),
+                Text(S.current.agentIntro, style: theme.textTheme.bodyMedium),
                 const SizedBox(height: 20),
                 Wrap(spacing: 8, runSpacing: 8, children: [
-                  for (final s in _suggestions) ActionChip(label: Text(s), onPressed: () => _send(s)),
+                  for (final s in S.current.suggestions) ActionChip(label: Text(s), onPressed: () => _send(s)),
                 ]),
               ])
             : ListView.builder(
@@ -170,12 +163,12 @@ class _AgentScreenState extends State<AgentScreen> with SingleTickerProviderStat
                 maxLines: 5,
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _send(),
-                decoration: const InputDecoration(hintText: 'اطلب من برادي…'),
+                decoration: InputDecoration(hintText: S.current.askHint),
               ),
             ),
             const SizedBox(width: 8),
             IconButton.filled(
-              tooltip: 'إرسال',
+              tooltip: S.current.send,
               onPressed: sending ? null : _send,
               icon: const Icon(Icons.arrow_upward_rounded),
             ),
@@ -200,8 +193,8 @@ class _AgentScreenState extends State<AgentScreen> with SingleTickerProviderStat
           }
           final items = snap.data ?? [];
           if (items.isEmpty) {
-            return ListView(children: const [
-              _EmptyState(icon: Icons.inbox_outlined, text: 'لا توجد مسودات بانتظار تأكيدك.'),
+            return ListView(children: [
+              _EmptyState(icon: Icons.inbox_outlined, text: S.current.noDrafts),
             ]);
           }
           return ListView.separated(
@@ -252,10 +245,10 @@ class _Typing extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(color: AppTokens.surfaceRaised, borderRadius: BorderRadius.circular(18)),
-          child: const Row(mainAxisSize: MainAxisSize.min, children: [
-            SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
-            SizedBox(width: 10),
-            Text('برادي يكتب…'),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)),
+            const SizedBox(width: 10),
+            Text(S.current.typing),
           ]),
         ),
       );

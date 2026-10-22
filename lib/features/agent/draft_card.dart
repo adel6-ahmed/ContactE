@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../design/tokens.dart';
 import 'agent_api.dart';
 import 'platform_meta.dart';
+import '../../l10n/strings.dart';
 
 const _limits = {'x': 280, 'linkedin': 3000, 'instagram': 2200, 'facebook': 63206};
 
@@ -49,21 +50,21 @@ class _DraftCardState extends State<DraftCard> {
       context: context,
       isScrollControlled: true,
       builder: (ctx) => Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: S.current.dir,
         child: Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, MediaQuery.of(ctx).viewInsets.bottom + 20),
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Text('تعديل المسودة', style: Theme.of(ctx).textTheme.titleMedium),
+            Text(S.current.editDraft, style: Theme.of(ctx).textTheme.titleMedium),
             const SizedBox(height: 12),
             TextField(controller: controller, maxLines: 8, minLines: 4, autofocus: true),
             const SizedBox(height: 12),
-            FilledButton(onPressed: () => Navigator.pop(ctx, controller.text), child: const Text('حفظ')),
+            FilledButton(onPressed: () => Navigator.pop(ctx, controller.text), child: Text(S.current.save)),
           ]),
         ),
       ),
     );
     if (text != null && text.trim().isNotEmpty && text != p.text) {
-      await _run(() => widget.api.edit(p.id, text.trim()), success: 'تم حفظ التعديل.');
+      await _run(() => widget.api.edit(p.id, text.trim()), success: S.current.saved);
     }
   }
 
@@ -81,7 +82,7 @@ class _DraftCardState extends State<DraftCard> {
             CircleAvatar(radius: 16, backgroundColor: meta.color.withValues(alpha: 0.15),
                 child: FaIcon(meta.icon, size: 16, color: meta.color)),
             const SizedBox(width: 10),
-            Expanded(child: Text(p.kind == 'reply' ? 'رد على ${meta.name}' : 'منشور ${meta.name}',
+            Expanded(child: Text(p.kind == 'reply' ? S.current.replyOn(meta.name) : S.current.postOn(meta.name),
                 style: theme.textTheme.titleSmall)),
             _StatusChip(status: p.status),
           ]),
@@ -94,7 +95,7 @@ class _DraftCardState extends State<DraftCard> {
           const SizedBox(height: 10),
           Wrap(spacing: 12, children: [
             if (limit != null)
-              Text('${p.text.characters.length} / $limit حرف', style: theme.textTheme.bodySmall),
+              Text(S.current.chars(p.text.characters.length, limit), style: theme.textTheme.bodySmall),
             if (p.scheduledFor != null)
               Text('🕒 ${_friendlyTime(p.scheduledFor!)}', style: theme.textTheme.bodySmall),
           ]),
@@ -103,28 +104,28 @@ class _DraftCardState extends State<DraftCard> {
             Row(children: [
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: busy ? null : () => _run(() => widget.api.confirm(p.id), success: 'تم.'),
+                  onPressed: busy ? null : () => _run(() => widget.api.confirm(p.id), success: S.current.done),
                   icon: busy
                       ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.check_rounded, size: 18),
-                  label: Text(p.scheduledFor != null ? 'تأكيد وجدولة' : 'تأكيد'),
+                  label: Text(p.scheduledFor != null ? S.current.confirmSchedule : S.current.confirm),
                 ),
               ),
               const SizedBox(width: 8),
-              IconButton.outlined(tooltip: 'تعديل', onPressed: busy ? null : _edit, icon: const Icon(Icons.edit_outlined)),
+              IconButton.outlined(tooltip: S.current.edit, onPressed: busy ? null : _edit, icon: const Icon(Icons.edit_outlined)),
               const SizedBox(width: 4),
               IconButton.outlined(
-                tooltip: 'رفض',
-                onPressed: busy ? null : () => _run(() => widget.api.reject(p.id), success: 'تم رفض المسودة.'),
+                tooltip: S.current.reject,
+                onPressed: busy ? null : () => _run(() => widget.api.reject(p.id), success: S.current.rejected),
                 icon: const Icon(Icons.close_rounded),
               ),
             ]),
             const SizedBox(height: 6),
-            Text('لن يُنشر أي شيء قبل أن تضغط تأكيد.', style: theme.textTheme.bodySmall),
+            Text(S.current.nothingUntilConfirm, style: theme.textTheme.bodySmall),
           ],
           if (p.status == 'shared' && p.shareText != null)
             TextButton.icon(onPressed: () => SharePlus.instance.share(ShareParams(text: p.shareText!)), icon: const Icon(Icons.ios_share, size: 18),
-                label: const Text('مشاركة مرة أخرى')),
+                label: Text(S.current.shareAgain)),
         ]),
       ),
     );
@@ -145,13 +146,11 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = switch (status) {
-      'pending' => ('بانتظار تأكيدك', AppTokens.warning),
-      'scheduled' => ('مجدول', AppTokens.info),
-      'published' => ('منشور', AppTokens.success),
-      'shared' => ('جاهز للمشاركة', AppTokens.success),
-      'rejected' => ('مرفوض', AppTokens.textMuted),
-      'failed' => ('فشل', AppTokens.danger),
-      _ => (status, AppTokens.textMuted),
+      'pending' => (S.current.status(status), AppTokens.warning),
+      'scheduled' => (S.current.status(status), AppTokens.info),
+      'published' || 'shared' => (S.current.status(status), AppTokens.success),
+      'failed' => (S.current.status(status), AppTokens.danger),
+      _ => (S.current.status(status), AppTokens.textMuted),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
